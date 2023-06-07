@@ -10,11 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "jquery": "^3.7.0",
+    "jquery-mask-plugin": "^1.14.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-loader-spinner": "^5.3.4",
     "react-router-dom": "^6.11.2"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.16",
+    "@types/jquery-mask-plugin": "^1.14.4",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",

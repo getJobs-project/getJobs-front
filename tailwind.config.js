@@ -5,6 +5,10 @@ export default {
     container: {
       center: true,
     },
+    fontFamily: {
+      title: ["Josefin Sans", "sans-serif"],
+      roboto: ["Roboto", "sans-serif"]
+    },
     extend: {},
   },
   plugins: [],
