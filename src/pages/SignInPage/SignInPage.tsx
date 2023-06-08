@@ -24,8 +24,10 @@ function SignInPage(): JSX.Element {
         <div className="bg-white min-h-[70vh] min-w-[370px] flex flex-col justify-center items-center w-1/4 gap-10 my-[50px] rounded-lg box-border">
           <h1 className="font-title font-bold text-3xl">getJobs</h1>
           <div className="w-[75%] flex flex-col justify-center items-center gap-[1rem] box-border">
-            <fieldset className="bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2">
-              <legend>email</legend>
+            <fieldset
+              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2`}
+            >
+              <legend className="bg-gray-500 text-white px-1 rounded-lg">email</legend>
               <input
                 className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
                 disabled={load}
@@ -38,8 +40,10 @@ function SignInPage(): JSX.Element {
                 required
               />
             </fieldset>
-            <fieldset className="bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2">
-              <legend>password</legend>
+            <fieldset
+              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2`}
+            >
+              <legend className="bg-gray-500 text-white px-1 rounded-lg">password</legend>
               <input
                 className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
                 disabled={load}
