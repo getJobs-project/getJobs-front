@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import InnerLoad from "../../components/Loading/InnerLoad";
 import { useNavigate } from "react-router-dom";
-import $ from "jquery";
-import "jquery-mask-plugin";
 import { signUp } from "../../services/userAPI";
 import moment from "moment";
-import { CreateUserParams } from "@/utils/users";
+import { CreateUserParams } from "../../utils/users";
+import Input from "../../components/Inputs/InputsSignPages";
+import httpStatus from "http-status";
 
 function SignUpPage(): JSX.Element {
-  $("#cpf").mask("000.000.000-00");
+  document.title = `getJobs - Sign Up`;
 
   const navigate = useNavigate();
+
   const errorsInit = {
     name: false,
     birthday: false,
@@ -19,9 +20,6 @@ function SignUpPage(): JSX.Element {
     password: false,
     confirmedPassword: false,
   };
-
-  const [load, setLoad] = useState(false);
-
   const [signUpData, setSignUpData] = useState({
     name: "",
     birthday: "",
@@ -32,6 +30,9 @@ function SignUpPage(): JSX.Element {
   });
   const [signUpDataError, setSignUpDataError] = useState(errorsInit);
   const [signUpError, setSignUpError] = useState(false);
+  const [load, setLoad] = useState(false);
+  const [duplicatedEmail, setDuplicatedEmail] = useState(false);
+  const [duplicatedCPF, setDuplicatedCPF] = useState(false);
 
   const emailValidation: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -42,8 +43,11 @@ function SignUpPage(): JSX.Element {
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSignUpError(false);
     setLoad(true);
     setSignUpDataError(errorsInit);
+    setDuplicatedEmail(false);
+    setDuplicatedCPF(false);
 
     const body = {
       name: signUpData.name,
@@ -66,9 +70,30 @@ function SignUpPage(): JSX.Element {
         navigate("/");
       })
       .catch((err) => {
+        if (err.response.status === httpStatus.CONFLICT)
+          if (
+            err.response.data.message ===
+            "There is already an user with given email"
+          )
+            duplicateEmailError();
+        if (
+          err.response.data.message ===
+          "There is already an user with given CPF"
+        )
+          duplicateCPFError();
+        setLoad(false);
         setSignUpError(true);
-        console.error(err);
       });
+  }
+
+  function duplicateEmailError() {
+    setDuplicatedEmail(true);
+    setSignUpDataError({ ...signUpDataError, email: true });
+  }
+
+  function duplicateCPFError() {
+    setDuplicatedCPF(true);
+    setSignUpDataError({ ...signUpDataError, cpf: true });
   }
 
   function checkAge(birthDate: Date): boolean {
@@ -79,7 +104,7 @@ function SignUpPage(): JSX.Element {
     const checkErrors = {
       birthday: checkAge(body.birthday),
       email: !emailValidation.test(body.email),
-      password: body.password.length < 4,
+      password: body.password.length < 6,
       name: body.name.length <= 1,
       confirmedPassword: signUpData.password !== signUpData.confirmedPassword,
       cpf: body.cpf.length !== 11,
@@ -110,192 +135,102 @@ function SignUpPage(): JSX.Element {
           <h1 className="font-title font-bold text-3xl">getJobs</h1>
           <form
             onSubmit={submit}
-            className="w-[75%] flex flex-col justify-center items-center gap-[1rem] box-border"
+            className="w-[75%] flex flex-col justify-center gap-[1rem] items-center box-border"
           >
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 ${
-                signUpDataError.name ? "border-2 border-red-700" : ""
-              }`}
-            >
-              {" "}
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                name
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="John Doe"
-                id="name"
-                type="text"
-                name="name"
-                value={signUpData.name}
-                onChange={handleInput}
-                required
-              />
-              {signUpDataError.name ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  O nome deve ter mais de um caractere!
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 ${
-                signUpDataError.birthday ? "border-2 border-red-700" : ""
-              }`}
-            >
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                birthday
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="00/00/0000"
-                id="birthday"
-                type="date"
-                name="birthday"
-                value={signUpData.birthday}
-                onChange={handleInput}
-                required
-              />
-              {signUpDataError.birthday ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  Cadastro apenas para maiores de 18.
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 ${
-                signUpDataError.email ? "border-2 border-red-700" : ""
-              }`}
-            >
-              {" "}
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                email
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="my.email@example.com"
-                id="email"
-                type="email"
-                name="email"
-                value={signUpData.email}
-                onChange={handleInput}
-                required
-              />
-              {signUpDataError.email ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  Insira um email válido.
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 data-te-animation-init
-               data-te-animation-start="onHover" data-te-animation-reset=true data-te-animation=[tada] ${
-                 signUpDataError.cpf
-                   ? "border-2 border-red-700 animationStart"
-                   : ""
-               }`}
-            >
-              {" "}
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                cpf
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="000.000.000-00"
-                id="cpf"
-                type="text"
-                name="cpf"
-                value={signUpData.cpf}
-                onChange={handleInput}
-              />
-              {signUpDataError.cpf ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  O cpf deve ter 11 números.
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 ${
-                signUpDataError.password ? "border-2 border-red-700" : ""
-              }`}
-            >
-              {" "}
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                password
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="******"
-                id="password"
-                type="password"
-                name="password"
-                value={signUpData.password}
-                onChange={handleInput}
-                required
-              />
-              {signUpDataError.password ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  A senha deve ter pelo menos 4 dígitos.
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-            <fieldset
-              className={`bg-gray-300 w-[100%] h-[60px] text-sm rounded-md box-border hover:opacity-80 p-2 ${
-                signUpDataError.confirmedPassword
-                  ? "border-2 border-red-700"
-                  : ""
-              }`}
-            >
-              {" "}
-              <legend className="bg-gray-500 text-white px-1 rounded-lg">
-                confirm password
-              </legend>
-              <input
-                className="bg-gray-300 w-[100%] box-border  placeholder:text-gray-500 placeholder:italic placeholder:font-roboto outline-none"
-                disabled={load}
-                placeholder="******"
-                id="confirmedPassword"
-                type="password"
-                name="confirmedPassword"
-                value={signUpData.confirmedPassword}
-                onChange={handleInput}
-              />
-              {signUpDataError.confirmedPassword ? (
-                <legend className="text-sm bg-gray-100 text-red-700 px-1 rounded-lg border-2 border-red-700">
-                  A senha deve ser igual a anterior.
-                </legend>
-              ) : (
-                <></>
-              )}
-            </fieldset>
-
+            <Input
+              signUpDataError={signUpDataError.name}
+              load={load}
+              signUpData={signUpData.name}
+              onChange={handleInput}
+              placeholder="John Doe"
+              type="text"
+              name="name"
+              id="name"
+              errorMessage="Your name must have at least one character"
+            />
+            <Input
+              signUpDataError={signUpDataError.birthday}
+              load={load}
+              signUpData={signUpData.birthday}
+              onChange={handleInput}
+              placeholder="00/00/0000"
+              type="date"
+              name="birthday"
+              id="birthday"
+              errorMessage="Registration is only for individuals aged 18 and above"
+            />
+            <Input
+              signUpDataError={signUpDataError.email}
+              load={load}
+              signUpData={signUpData.email}
+              onChange={handleInput}
+              placeholder="my.email@example.com"
+              type="email"
+              name="email"
+              id="email"
+              errorMessage={
+                !duplicatedEmail
+                  ? "Please enter a valid email address"
+                  : "This email is already registered"
+              }
+            />
+            <Input
+              signUpDataError={signUpDataError.cpf}
+              load={load}
+              signUpData={signUpData.cpf}
+              onChange={handleInput}
+              placeholder="000.000.000-00"
+              type="text"
+              name="cpf"
+              id="cpf"
+              errorMessage={
+                !duplicatedCPF
+                  ? "The CPF must have exactly 11 digits"
+                  : "This CPF is already registered"
+              }
+            />
+            <Input
+              signUpDataError={signUpDataError.password}
+              load={load}
+              signUpData={signUpData.password}
+              onChange={handleInput}
+              placeholder="******"
+              type="password"
+              name="password"
+              id="password"
+              errorMessage="Your password must have at least 6 digits"
+            />
+            <Input
+              signUpDataError={signUpDataError.confirmedPassword}
+              load={load}
+              signUpData={signUpData.confirmedPassword}
+              onChange={handleInput}
+              placeholder="******"
+              type="password"
+              name="confirm Password"
+              id="confirmedPassword"
+              errorMessage="The passwords must be identical"
+            />
             <button
               disabled={load}
               type="submit"
               className="font-roboto font-medium tracking-wide bg-red-700 h-[45px] w-[100%] text-md rounded-md text-gray-100 p-2 box-border hover:opacity-80"
             >
-              {!load ? "Cadastrar" : <InnerLoad height={25} />}
+              {!load ? "Sign Up" : <InnerLoad height={25} />}
             </button>
+            {signUpError ? (
+              <div className="text-xs text-red-700 italic px-1">
+                There was an error during registration, please check all fields.
+              </div>
+            ) : (
+              <></>
+            )}
           </form>
           <h1
             onClick={() => navigate("/")}
-            className="font-roboto font-medium underline text-sm hover:opacity-80 cursor-pointer"
+            className="font-roboto font-medium hover:underline text-sm hover:opacity-80 cursor-pointer"
           >
-            Já tem cadastro? Clique aqui!
+            Log in!
           </h1>
         </div>
       </main>
