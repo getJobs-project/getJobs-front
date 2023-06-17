@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import InnerLoad from "../../components/Loading/InnerLoad";
-import { useNavigate } from "react-router-dom";
-import { signUp } from "../../services/userAPI";
-import moment from "moment";
-import { CreateUserParams } from "../../utils/users";
-import Input from "../../components/Inputs/InputsSignPages";
 import httpStatus from "http-status";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
+import InnerLoad from "../../components/Loading/InnerLoad";
+import Input from "../../components/Inputs/InputsSignPages";
+
+import { CreateUserParams } from "../../utils/users";
+
+import { signUp } from "../../services/userAPI";
 
 function SignUpPage(): JSX.Element {
   document.title = `getJobs - Sign Up`;

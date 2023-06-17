@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import InnerLoad from "../../components/Loading/InnerLoad";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "../../services/authAPI";
+
+import UserContext from "../../contexts/UserContext";
+
+import InnerLoad from "../../components/Loading/InnerLoad";
 import Input from "../../components/Inputs/InputsSignPages";
+
+import { signIn } from "../../services/authAPI";
 
 function SignInPage(): JSX.Element {
   document.title = `getJobs - Sign In`;
@@ -14,6 +18,7 @@ function SignInPage(): JSX.Element {
     password: "",
   });
   const [signUpDataError, setSignUpDataError] = useState(false);
+  const { setUserData } = useContext(UserContext);
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
     setSignUpDataError(false);
@@ -25,7 +30,8 @@ function SignInPage(): JSX.Element {
     signIn(signUpData)
       .then((res) => {
         setLoad(false);
-        console.log(res);
+        setUserData(res);
+        navigate("/main");
       })
       .catch(() => {
         setLoad(false);

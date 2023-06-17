@@ -1,4 +1,4 @@
-import { CreateUserParams } from "@/utils/users";
+import { CreateUserParams } from "../utils/users";
 import api from "./api";
 
 export async function signUp(body: CreateUserParams) {
