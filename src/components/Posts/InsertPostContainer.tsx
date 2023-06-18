@@ -1,21 +1,34 @@
+import InnerLoad from "../../components/Loading/InnerLoad";
 import React, { useState } from "react";
+import { AiOutlineClose } from "react-icons/ai";
 import { CiImageOn, CiLocationOn } from "react-icons/ci";
 
-export default function InsertPostContainer({ userProfilePic }) {
+export default function InsertPostContainer({
+  userProfilePic,
+}: {
+  userProfilePic: string;
+}) {
+  const [load, setLoad] = useState(false);
   const [addImageUrl, setAddImageUrl] = useState(false);
-  const [addLocalizationUrl, setAddLocalizationUrl] = useState(false);
+  const [addLocationUrl, setAddLocationUrl] = useState(false);
   const [newPost, setNewPost] = useState({
     text: "",
-    image: "",
     address: "",
+    image: "",
   });
 
   function handleTextArea(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setNewPost({ ...newPost, [e.target.name]: e.target.value });
   }
 
+  function clearArea(type: "image" | "address") {
+    if (type === "image") setAddImageUrl(false);
+    if (type === "address") setAddLocationUrl(false);
+    setNewPost({ ...newPost, [type]: "" });
+  }
+
   return (
-    <div className="font-roboto text-black max-w-[450px] bg-gray-200 w-full p-5 sm:rounded-lg flex items-start gap-0 box-border">
+    <div className="font-roboto text-black max-w-[550px] bg-gray-200 w-full p-5 sm:rounded-lg flex items-start gap-0 box-border">
       <img
         className="w-[10%] aspect-square object-cover rounded-full border border-black"
         src={userProfilePic}
@@ -30,42 +43,62 @@ export default function InsertPostContainer({ userProfilePic }) {
           onChange={(e) => handleTextArea(e)}
           value={newPost.text}
           wrap="hard"
+          disabled={load}
           required
         ></textarea>
+
         {addImageUrl ? (
-          <textarea
-            className="resize-none border-b max-w-[450px] border-gray-600 border-solid w-full h-8 bg-gray-200 outline-none"
-            rows={1}
-            cols={20}
-            placeholder="Insert your image URL..."
-            name="image"
-            onChange={(e) => handleTextArea(e)}
-            value={newPost.image}
-            wrap="off"
-            required
-          ></textarea>
+          <div className="flex items-center gap-2 border-b max-w-[450px] border-gray-600 border-solid w-full h-8 outline-none">
+            <textarea
+              className="resize-none w-full bg-gray-200 outline-none"
+              rows={1}
+              cols={20}
+              placeholder="Insert your image URL..."
+              name="image"
+              onChange={(e) => handleTextArea(e)}
+              value={newPost.image}
+              wrap="off"
+              disabled={load}
+              required
+            ></textarea>
+            <AiOutlineClose
+              name="image"
+              onClick={() => clearArea("image")}
+              className="text-xl cursor-pointer rounded-xl hover:bg-gray-300"
+            />
+          </div>
         ) : (
           <></>
         )}
-        {addLocalizationUrl ? (
-          <textarea
-            className="resize-none border-b max-w-[450px] border-gray-600 border-solid w-full h-8 bg-gray-200 outline-none"
-            rows={1}
-            cols={20}
-            placeholder="Insert adress here..."
-            name="address"
-            onChange={(e) => handleTextArea(e)}
-            value={newPost.address}
-            wrap="off"
-            required
-          ></textarea>
+        {addLocationUrl ? (
+          <div className="flex items-center gap-2 border-b max-w-[450px] border-gray-600 border-solid w-full h-8 outline-none">
+            <textarea
+              className="resize-none w-full bg-gray-200 outline-none"
+              rows={1}
+              cols={20}
+              placeholder="Insert adress here..."
+              name="address"
+              onChange={(e) => handleTextArea(e)}
+              value={newPost.address}
+              wrap="off"
+              disabled={load}
+              required
+            ></textarea>
+            <AiOutlineClose
+              name="address"
+              onClick={() => clearArea("address")}
+              className="text-xl cursor-pointer rounded-xl hover:bg-gray-300"
+            />
+          </div>
         ) : (
           <></>
         )}
-        <div className="w-full flex justify-between">
+        <div className="w-full flex justify-between items-center">
           <div className="w-full flex gap-2 text-2xl">
             <div
-              onClick={() => setAddImageUrl(true)}
+              onClick={() => {
+                if (!load) setAddImageUrl(true);
+              }}
               className="relative group hover:bg-gray-300 rounded-lg h-[25px]"
             >
               <CiImageOn className="cursor-pointer" />
@@ -74,7 +107,9 @@ export default function InsertPostContainer({ userProfilePic }) {
               </span>
             </div>
             <div
-              onClick={() => setAddLocalizationUrl(true)}
+              onClick={() => {
+                if (!load) setAddLocationUrl(true);
+              }}
               className="relative group hover:bg-gray-300 rounded-lg h-[25px]"
             >
               <CiLocationOn className="cursor-pointer" />
@@ -83,19 +118,20 @@ export default function InsertPostContainer({ userProfilePic }) {
               </span>
             </div>
           </div>
-          <button className="w-[75px] h-[35px] bg-red-800 rounded-xl text-gray-100">
-            Post
+          <button
+            disabled={load}
+            className="h-[35px] text-sm bg-red-800 rounded-xl text-gray-100 p-3 flex justify-center items-center gap-1"
+          >
+            {load ? (
+              <>
+                <InnerLoad height={10} /> Posting
+              </>
+            ) : (
+              "Post"
+            )}
           </button>
         </div>
       </form>
     </div>
   );
 }
-
-type Post = {
-  isUserPost: boolean;
-  userProfilePic: string;
-  userName: string;
-  text: string;
-  img: string;
-};

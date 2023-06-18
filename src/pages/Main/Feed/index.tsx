@@ -4,6 +4,8 @@ import PostContainer from "../../../components/Posts/PostContainer";
 import InsertPostContainer from "../../../components/Posts/InsertPostContainer";
 
 export default function Feed() {
+  document.title = `getJobs - Feed`;
+
   const { user } = JSON.parse(window.localStorage.getItem("userData"));
 
   return (
@@ -20,7 +22,7 @@ export default function Feed() {
             <h1 className="font-roboto font-bold text-2xl">Settings</h1>
           </div>
         </div>
-        <div className="h-[100vh] max-w-[850px] min-w-[370px] flex flex-col items-center md:w-2/4 gap-3 sm:rounded-lg box-border w-[100vw] sm:py-5 py-[55px] overflow-y-scroll no-scrollbar">
+        <div className="h-[100vh] max-w-[850px] min-w-[370px] flex flex-col items-center md:w-2/4 gap-3 sm:rounded-lg box-border w-full sm:py-5 py-[55px] overflow-y-scroll no-scrollbar">
           <InsertPostContainer
             userProfilePic={
               "https://miro.medium.com/v2/resize:fit:1400/1*g09N-jl7JtVjVZGcd-vL2g.jpeg"
@@ -36,6 +38,7 @@ export default function Feed() {
             img={
               "https://img.freepik.com/fotos-gratis/fundo-branco-das-texturas-da-parede-de-tijolo_1203-6587.jpg"
             }
+            address="Asa Norte Brasilia DF"
           />
           <PostContainer
             isUserPost={user.id === 9}
@@ -47,6 +50,7 @@ export default function Feed() {
             img={
               "https://img.freepik.com/fotos-gratis/fundo-branco-das-texturas-da-parede-de-tijolo_1203-6587.jpg"
             }
+            address="Brasilia DF"
           />
         </div>
         <div className="hidden h-[100vh] max-w-[200px] min-w-[170px] w-[100%] md:flex flex-col rounded-lg box-border p-5">

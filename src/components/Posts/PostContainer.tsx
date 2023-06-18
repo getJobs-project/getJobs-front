@@ -8,6 +8,7 @@ export default function PostContainer({
   userName,
   text,
   img,
+  address,
 }: Post) {
   const [menuVisibility, setMenuVisibility] = useState(false);
 
@@ -30,8 +31,9 @@ export default function PostContainer({
       )}
     </ul>
   );
+
   return (
-    <div className="font-roboto text-black max-w-[450px] bg-white w-full p-5 sm:rounded-lg flex flex-col gap-5">
+    <div className="font-roboto text-black max-w-[550px] bg-gray-200 w-full p-5 sm:rounded-lg flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
@@ -60,8 +62,11 @@ export default function PostContainer({
       </div>
       <div className="text-[10px] flex gap-1 items-center">
         <CiLocationOn className="text-lg" />
-        <a href={`https://www.google.com/maps/place/15°45'04.3"S+47°54'36.4"W`}>
-          SHCNW SQNW Jardins Planalto - Brasília, DF, 70686-190
+        <a
+          target="_blank"
+          href={`https://www.google.com/maps/place/${address}`}
+        >
+          {address}
         </a>
       </div>
     </div>
@@ -74,4 +79,5 @@ type Post = {
   userName: string;
   text: string;
   img: string;
+  address: string;
 };
