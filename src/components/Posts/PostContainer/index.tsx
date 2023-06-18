@@ -33,7 +33,7 @@ export default function PostContainer({
   );
 
   return (
-    <div className="font-roboto text-black max-w-[550px] bg-gray-200 w-full p-5 sm:rounded-lg flex flex-col gap-5">
+    <div className="font-roboto text-gray-900 max-w-[550px] bg-gray-300 w-full p-5 sm:rounded-lg flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img

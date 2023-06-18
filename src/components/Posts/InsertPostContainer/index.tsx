@@ -1,4 +1,4 @@
-import InnerLoad from "../../components/Loading/InnerLoad";
+import InnerLoad from "../../Loading/InnerLoad";
 import React, { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { CiImageOn, CiLocationOn } from "react-icons/ci";
