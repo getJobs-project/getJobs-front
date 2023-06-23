@@ -53,22 +53,30 @@ export default function PostContainer({
       </div>
 
       <p className="text-sm">{text}</p>
-      <div className="flex justify-center">
-        <img
-          className="w-[100%] aspect-square object-cover border border-black"
-          src={img}
-          alt="Profile Pic"
-        />
-      </div>
-      <div className="text-[10px] flex gap-1 items-center">
-        <CiLocationOn className="text-lg" />
-        <a
-          target="_blank"
-          href={`https://www.google.com/maps/place/${address}`}
-        >
-          {address}
-        </a>
-      </div>
+      {img ? (
+        <div className="flex justify-center">
+          <img
+            className="w-[100%] aspect-square object-cover border border-black"
+            src={img}
+            alt="Profile Pic"
+          />
+        </div>
+      ) : (
+        <></>
+      )}
+      {address ? (
+        <div className="text-[10px] flex gap-1 items-center">
+          <CiLocationOn className="text-lg" />
+          <a
+            target="_blank"
+            href={`https://www.google.com/maps/place/${address}`}
+          >
+            {address}
+          </a>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

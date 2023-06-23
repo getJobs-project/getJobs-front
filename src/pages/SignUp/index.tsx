@@ -22,6 +22,7 @@ function SignUpPage(): JSX.Element {
     cpf: false,
     password: false,
     confirmedPassword: false,
+    profilePicture: false,
   };
   const [signUpData, setSignUpData] = useState({
     name: "",
@@ -30,6 +31,7 @@ function SignUpPage(): JSX.Element {
     cpf: "",
     password: "",
     confirmedPassword: "",
+    profilePicture: "",
   });
   const [signUpDataError, setSignUpDataError] = useState(errorsInit);
   const [signUpError, setSignUpError] = useState(false);
@@ -58,6 +60,7 @@ function SignUpPage(): JSX.Element {
       email: signUpData.email,
       cpf: signUpData.cpf.replaceAll(".", "").replace("-", ""),
       password: signUpData.password,
+      profilePicture: signUpData.profilePicture,
     };
 
     const { param, errors } = checkErrors(body);
@@ -103,6 +106,14 @@ function SignUpPage(): JSX.Element {
     return moment().diff(birthDate, "years") < 18;
   }
 
+  function checkUrl(url: string): boolean {
+    try {
+      return Boolean(new URL(url));
+    } catch (e) {
+      return false;
+    }
+  }
+
   function checkErrors(body: CreateUserParams): CheckErrorsParams {
     const checkErrors = {
       birthday: checkAge(body.birthday),
@@ -111,7 +122,10 @@ function SignUpPage(): JSX.Element {
       name: body.name.length <= 1,
       confirmedPassword: signUpData.password !== signUpData.confirmedPassword,
       cpf: body.cpf.length !== 11,
+      profilePicture: !checkUrl(body.profilePicture),
     };
+
+    console.log(checkErrors);
 
     return {
       param: Object.values(checkErrors).some((e) => e === true),
@@ -128,6 +142,7 @@ function SignUpPage(): JSX.Element {
       name: boolean;
       confirmedPassword: boolean;
       cpf: boolean;
+      profilePicture: boolean;
     };
   };
 
@@ -213,6 +228,17 @@ function SignUpPage(): JSX.Element {
               name="confirm Password"
               id="confirmedPassword"
               errorMessage="The passwords must be identical"
+            />
+            <Input
+              signUpDataError={signUpDataError.profilePicture}
+              load={load}
+              signUpData={signUpData.profilePicture}
+              onChange={handleInput}
+              placeholder="http://url.com/profilePicture.png"
+              type="text"
+              name="profile Picture"
+              id="profilePicture"
+              errorMessage="Invalid URL"
             />
             <button
               disabled={load}

@@ -2,29 +2,39 @@ import InnerLoad from "../../Loading/InnerLoad";
 import React, { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { CiImageOn, CiLocationOn } from "react-icons/ci";
+import { createPost } from "../../../services/postsAPI";
+import useToken from "../../../hooks/useToken";
 
 export default function InsertPostContainer({
   userProfilePic,
 }: {
   userProfilePic: string;
 }) {
+  const token = useToken();
   const [load, setLoad] = useState(false);
   const [addImageUrl, setAddImageUrl] = useState(false);
   const [addLocationUrl, setAddLocationUrl] = useState(false);
   const [newPost, setNewPost] = useState({
     text: "",
-    address: "",
-    image: "",
+    location: "",
+    imageUrl: "",
   });
 
   function handleTextArea(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setNewPost({ ...newPost, [e.target.name]: e.target.value });
   }
 
-  function clearArea(type: "image" | "address") {
-    if (type === "image") setAddImageUrl(false);
-    if (type === "address") setAddLocationUrl(false);
+  function clearArea(type: "imageUrl" | "location") {
+    if (type === "imageUrl") setAddImageUrl(false);
+    if (type === "location") setAddLocationUrl(false);
     setNewPost({ ...newPost, [type]: "" });
+  }
+
+  function post() {
+    setLoad(true);
+    createPost(token, newPost)
+      .then(() => setLoad(false))
+      .catch((err) => console.error(err));
   }
 
   return (
@@ -33,7 +43,10 @@ export default function InsertPostContainer({
         className="w-[10%] aspect-square object-cover rounded-full border border-black"
         src={userProfilePic}
       />
-      <form className=" font-roboto text-black max-w-[450px] bg-gray-200 w-full p-2 flex flex-col items-end gap-2">
+      <form
+        onSubmit={post}
+        className=" font-roboto text-black max-w-[450px] bg-gray-200 w-full p-2 flex flex-col items-end gap-2"
+      >
         <textarea
           className="resize-none text-clip break-words border-b max-w-[450px] border-gray-600 border-solid w-full h-20 bg-gray-200 outline-none"
           rows={3}
@@ -54,16 +67,16 @@ export default function InsertPostContainer({
               rows={1}
               cols={20}
               placeholder="Insert your image URL..."
-              name="image"
+              name="imageUrl"
               onChange={(e) => handleTextArea(e)}
-              value={newPost.image}
+              value={newPost.imageUrl}
               wrap="off"
               disabled={load}
               required
             ></textarea>
             <AiOutlineClose
-              name="image"
-              onClick={() => clearArea("image")}
+              name="imageUrl"
+              onClick={() => clearArea("imageUrl")}
               className="text-xl cursor-pointer rounded-xl hover:bg-gray-300"
             />
           </div>
@@ -77,16 +90,16 @@ export default function InsertPostContainer({
               rows={1}
               cols={20}
               placeholder="Insert adress here..."
-              name="address"
+              name="location"
               onChange={(e) => handleTextArea(e)}
-              value={newPost.address}
+              value={newPost.location}
               wrap="off"
               disabled={load}
               required
             ></textarea>
             <AiOutlineClose
-              name="address"
-              onClick={() => clearArea("address")}
+              name="location"
+              onClick={() => clearArea("location")}
               className="text-xl cursor-pointer rounded-xl hover:bg-gray-300"
             />
           </div>

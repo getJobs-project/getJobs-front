@@ -4,6 +4,7 @@ export type CreateUserParams = {
   name: string;
   birthday: Date;
   cpf: string;
+  profilePicture: string;
 };
 
 export type LoginUserParams = {
