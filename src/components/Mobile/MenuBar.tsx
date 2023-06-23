@@ -6,50 +6,45 @@ import {
   AiOutlineSetting,
   AiOutlineUser,
   AiOutlineSearch,
+  AiOutlinePlusCircle,
 } from "react-icons/ai";
 
-import logo from "../../assets/favicon-32x32.png";
-
-export default function SideBar() {
-  const { user } = JSON.parse(
-    window.localStorage.getItem("userData")
-  );
+export default function MenuBar() {
+  const userName = "andre";
   const navigate = useNavigate();
   return (
     <>
-      <div className="md:border-r md:border-gray-950 hidden h-[100vh] max-w-[200px] min-w-[100px] w-[100%] sm:flex flex-col box-border gap-4 p-5">
-        <span className="cursor-pointer hover:opacity-70 text-gray-200 flex gap-2 items-center font-title text-3xl">
-          <img
-            className="rounded-md w-10 h-10 text-sm"
-            src={logo}
-            alt="Logo Image"
-          />
-          getJobs
-        </span>
-        <div className="flex flex-col gap-1 text-gray-200">
+      <div className="bg-gray-800 z-10 fixed bottom-0 left-0 w-full flex justify-center items-center h-[50px] sm:hidden text-center text-white">
+        <div className="flex items-center w-full justify-between text-gray-200 px-4">
           <span
             onClick={() => navigate("/main/feed")}
             className="cursor-pointer flex gap-4 items-center hover:bg-gray-700 rounded-xl w-fit p-2 font-roboto font-normal text-2xl"
           >
-            <AiOutlineHome /> Home
+            <AiOutlineHome />
           </span>
           <span
-            onClick={() => navigate(`/main/${user.userName}`)}
+            onClick={() => navigate(`/main/${userName}`)}
             className="cursor-pointer flex gap-4 items-center hover:bg-gray-700 rounded-xl w-fit p-2 font-roboto font-normal text-2xl"
           >
-            <AiOutlineUser /> Profile
+            <AiOutlineUser />
+          </span>
+          <span
+            onClick={() => navigate(`/post/`)}
+            className="cursor-pointer flex gap-4 items-center hover:bg-gray-700 rounded-xl w-fit p-2 font-roboto font-normal text-2xl"
+          >
+            <AiOutlinePlusCircle />
           </span>
           <span
             onClick={() => navigate(`/main/search`)}
             className="cursor-pointer flex gap-4 items-center hover:bg-gray-700 rounded-xl w-fit p-2 font-roboto font-normal text-2xl"
           >
-            <AiOutlineSearch /> Explore
+            <AiOutlineSearch />
           </span>
           <span
             onClick={() => navigate(`/main/settings`)}
             className="cursor-pointer flex gap-4 items-center hover:bg-gray-700 rounded-xl w-fit p-2 font-roboto font-normal text-2xl"
           >
-            <AiOutlineSetting /> Settings
+            <AiOutlineSetting />
           </span>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { CiLocationOn } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 export default function PostContainer({
   isUserPost,
@@ -11,6 +12,7 @@ export default function PostContainer({
   address,
 }: Post) {
   const [menuVisibility, setMenuVisibility] = useState(false);
+  const navigate = useNavigate();
 
   const menu = (
     <ul className="absolute top-[-10px] right-[-10px] flex flex-col items-end gap-1 p-2 box-border bg-gray-800 text-white w-[100px] rounded-md">
@@ -40,8 +42,14 @@ export default function PostContainer({
             className="w-[10%] aspect-square object-cover rounded-full border border-black cursor-pointer"
             src={userProfilePic}
             alt="Profile Pic"
+            onClick={() => navigate(`/main/${userName}`)}
           />
-          <h1 className="cursor-pointer">{userName}</h1>
+          <h1
+            onClick={() => navigate(`/main/${userName}`)}
+            className="cursor-pointer"
+          >
+            {userName}
+          </h1>
         </div>
         <div className="relative">
           <BiDotsHorizontalRounded

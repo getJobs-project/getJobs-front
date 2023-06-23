@@ -7,18 +7,23 @@ import useToken from "../../../hooks/useToken";
 
 export default function InsertPostContainer({
   userProfilePic,
+  setReload,
+  reload,
 }: {
   userProfilePic: string;
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
+  reload: boolean;
 }) {
   const token = useToken();
   const [load, setLoad] = useState(false);
   const [addImageUrl, setAddImageUrl] = useState(false);
   const [addLocationUrl, setAddLocationUrl] = useState(false);
-  const [newPost, setNewPost] = useState({
+  const clearPost = {
     text: "",
     location: "",
     imageUrl: "",
-  });
+  };
+  const [newPost, setNewPost] = useState(clearPost);
 
   function handleTextArea(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setNewPost({ ...newPost, [e.target.name]: e.target.value });
@@ -30,10 +35,15 @@ export default function InsertPostContainer({
     setNewPost({ ...newPost, [type]: "" });
   }
 
-  function post() {
+  function post(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoad(true);
     createPost(token, newPost)
-      .then(() => setLoad(false))
+      .then(() => {
+        setLoad(false);
+        setReload(!reload);
+        setNewPost(clearPost);
+      })
       .catch((err) => console.error(err));
   }
 

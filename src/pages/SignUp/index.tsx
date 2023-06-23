@@ -23,6 +23,7 @@ function SignUpPage(): JSX.Element {
     password: false,
     confirmedPassword: false,
     profilePicture: false,
+    username: false,
   };
   const [signUpData, setSignUpData] = useState({
     name: "",
@@ -32,12 +33,14 @@ function SignUpPage(): JSX.Element {
     password: "",
     confirmedPassword: "",
     profilePicture: "",
+    username: "",
   });
   const [signUpDataError, setSignUpDataError] = useState(errorsInit);
   const [signUpError, setSignUpError] = useState(false);
   const [load, setLoad] = useState(false);
   const [duplicatedEmail, setDuplicatedEmail] = useState(false);
   const [duplicatedCPF, setDuplicatedCPF] = useState(false);
+  const [duplicatedUsername, setDuplicatedUsername] = useState(false);
 
   const emailValidation: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -53,6 +56,7 @@ function SignUpPage(): JSX.Element {
     setSignUpDataError(errorsInit);
     setDuplicatedEmail(false);
     setDuplicatedCPF(false);
+    setDuplicatedUsername(false);
 
     const body = {
       name: signUpData.name,
@@ -61,6 +65,7 @@ function SignUpPage(): JSX.Element {
       cpf: signUpData.cpf.replaceAll(".", "").replace("-", ""),
       password: signUpData.password,
       profilePicture: signUpData.profilePicture,
+      userName: signUpData.username,
     };
 
     const { param, errors } = checkErrors(body);
@@ -87,6 +92,11 @@ function SignUpPage(): JSX.Element {
           "There is already an user with given CPF"
         )
           duplicateCPFError();
+        if (
+          err.response.data.message ===
+          "There is already an user with given username"
+        )
+          duplicateUsernameError();
         setLoad(false);
         setSignUpError(true);
       });
@@ -100,6 +110,11 @@ function SignUpPage(): JSX.Element {
   function duplicateCPFError() {
     setDuplicatedCPF(true);
     setSignUpDataError({ ...signUpDataError, cpf: true });
+  }
+
+  function duplicateUsernameError() {
+    setDuplicatedCPF(true);
+    setSignUpDataError({ ...signUpDataError, username: true });
   }
 
   function checkAge(birthDate: Date): boolean {
@@ -123,9 +138,8 @@ function SignUpPage(): JSX.Element {
       confirmedPassword: signUpData.password !== signUpData.confirmedPassword,
       cpf: body.cpf.length !== 11,
       profilePicture: !checkUrl(body.profilePicture),
+      username: body.userName.length > 20,
     };
-
-    console.log(checkErrors);
 
     return {
       param: Object.values(checkErrors).some((e) => e === true),
@@ -143,6 +157,7 @@ function SignUpPage(): JSX.Element {
       confirmedPassword: boolean;
       cpf: boolean;
       profilePicture: boolean;
+      username: boolean;
     };
   };
 
@@ -178,6 +193,21 @@ function SignUpPage(): JSX.Element {
               errorMessage="Registration is only for individuals aged 18 and above"
             />
             <Input
+              signUpDataError={signUpDataError.cpf}
+              load={load}
+              signUpData={signUpData.cpf}
+              onChange={handleInput}
+              placeholder="000.000.000-00"
+              type="text"
+              name="cpf"
+              id="cpf"
+              errorMessage={
+                !duplicatedCPF
+                  ? "The CPF must have exactly 11 digits"
+                  : "This CPF is already registered"
+              }
+            />
+            <Input
               signUpDataError={signUpDataError.email}
               load={load}
               signUpData={signUpData.email}
@@ -193,19 +223,30 @@ function SignUpPage(): JSX.Element {
               }
             />
             <Input
-              signUpDataError={signUpDataError.cpf}
+              signUpDataError={signUpDataError.username}
               load={load}
-              signUpData={signUpData.cpf}
+              signUpData={signUpData.username}
               onChange={handleInput}
-              placeholder="000.000.000-00"
+              placeholder="john.doe123"
               type="text"
-              name="cpf"
-              id="cpf"
+              name="username"
+              id="username"
               errorMessage={
-                !duplicatedCPF
-                  ? "The CPF must have exactly 11 digits"
-                  : "This CPF is already registered"
+                !duplicatedUsername
+                  ? "Please enter a username with less then 20 characters"
+                  : "This username is already registered"
               }
+            />
+            <Input
+              signUpDataError={signUpDataError.profilePicture}
+              load={load}
+              signUpData={signUpData.profilePicture}
+              onChange={handleInput}
+              placeholder="http://url.com/profilePicture.png"
+              type="text"
+              name="profile Picture"
+              id="profilePicture"
+              errorMessage="Invalid URL"
             />
             <Input
               signUpDataError={signUpDataError.password}
@@ -229,17 +270,7 @@ function SignUpPage(): JSX.Element {
               id="confirmedPassword"
               errorMessage="The passwords must be identical"
             />
-            <Input
-              signUpDataError={signUpDataError.profilePicture}
-              load={load}
-              signUpData={signUpData.profilePicture}
-              onChange={handleInput}
-              placeholder="http://url.com/profilePicture.png"
-              type="text"
-              name="profile Picture"
-              id="profilePicture"
-              errorMessage="Invalid URL"
-            />
+
             <button
               disabled={load}
               type="submit"

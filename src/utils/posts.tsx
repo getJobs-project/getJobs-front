@@ -13,6 +13,6 @@ export type Post = {
   userId: number;
   User: {
     profilePicture: string;
-    name: string;
+    userName: string;
   };
 };
